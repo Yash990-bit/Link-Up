@@ -1,4 +1,4 @@
-import React,{useEffect,useState} from 'react'
+import React  from 'react'
 import { Navigate, Route, Routes } from 'react-router'
 
 import HomePage from './pages/HomePage.jsx'

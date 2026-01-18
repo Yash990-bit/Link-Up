@@ -2,7 +2,7 @@ import { Aperture } from 'lucide-react'
 import React,{useState} from 'react'
 import { Link } from 'react-router'
 import { useMutation , useQueryClient} from '@tanstack/react-query'
-
+import { signup } from '../lib/api.js'
 
 
 const SignUpPage = () => {
@@ -13,14 +13,14 @@ const SignUpPage = () => {
     })
     const queryClient = useQueryClient()
 
-    const {mutate,isPending,error}= useMutation({
+    const {signupMutation,isPending,error}= useMutation({
         mutationFn:signup,
         onSuccess:()=>queryClient.invalidateQueries({queryKey:["authUser"]}),
     })
 
     const handleSignUp = (e) => {  
         e.preventDefault()
-        mutate()
+        signupMutation(signupData)
     }
 
 
@@ -36,6 +36,12 @@ const SignUpPage = () => {
                 LinkUp
             </span>
             </div>
+
+            {error && (
+                <div className='alert alert-error mb-4'>
+                    <span>{error.response.data.message}</span>
+                </div>
+            )}
 
             <div className='w-full'>
                 <form onSubmit={handleSignUp}>
@@ -105,14 +111,21 @@ const SignUpPage = () => {
                         </div>
 
                         <button className='btn btn-primary w-full' type="submit">
-                            {isPending ? "Signing Up..." : "Create Account"}
+                            {isPending ? (
+                                <>
+                                <span className="loading loading-spinner loading-xs"></span>
+                                Loading...
+                                </>
+                            ):(
+                                "Create Account"
+                            )}
                         </button>
 
                         <div className='text-center mt-4'>
                             <p className='text-sm'>
                                 Already have an account?{" "}
                                 <Link to="/login" className='text-primary hover:underline'>
-                                    Sign In
+                                    Login In
                                 </Link>
                             </p>
                         </div>
