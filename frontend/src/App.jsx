@@ -12,6 +12,7 @@ import { Toaster } from 'react-hot-toast'
 // import  axiosInstance  from './lib/axios.js'
 import PageLoader from './components/PageLoader.jsx'
 import useAuthUser from './hooks/useAuthUser.js'
+import Layout from './components/Layout.jsx'
 
 const App = () => {
 
@@ -23,10 +24,12 @@ const App = () => {
   if(isLoading) return <PageLoader />
 
   return (
-    <div className='h-screen' data-theme='dark'>
+    <div className='h-screen' data-theme='forest'>
       <Routes>
         <Route path='/' element={isAuthenticated && isOnboarded ? (
-          <HomePage />
+          <Layout showSidebar={true}>
+            <HomePage />
+          </Layout>
         ):(
           <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
         )
