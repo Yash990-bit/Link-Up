@@ -52,13 +52,14 @@ export async function signup(req,res){
         })
 
         res.cookie("jwt",token,{
-            maxAge: 7*24*60*60*1000,
-            httpOnly:true,
-            sameSite:"strict",
-            secure:process.env.NODE_ENV==="production"
+            maxAge: 7*24*60*60*1000, // 7 days in MS
+            httpOnly:true, // prevent XSS attacks cross-site scripting attacks
+            sameSite: "lax", // CSRF attacks cross-site request forgery attacks
+            secure: process.env.NODE_ENV === "production",
         })
 
         res.status(201).json({success:true, user: newUser})
+        console.log("User signed up successfully:", newUser.email)
 
     }
     catch(error){
@@ -90,11 +91,12 @@ export async function login(req,res){
         res.cookie("jwt",token,{
             maxAge: 7*24*60*60*1000,
             httpOnly:true,
-            sameSite:"strict",
-            secure:process.env.NODE_ENV==="production"
+            sameSite: "lax",
+            secure: process.env.NODE_ENV === "production",
         })
 
         res.status(200).json({success:true,user})
+        console.log("User logged in successfully:", user.email)
 
     }
     catch(error){

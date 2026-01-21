@@ -9,22 +9,22 @@ import { connectDB } from "./lib/db.js"
 
 
 
-const app=express()
-const PORT=process.env.PORT 
+const app = express()
+const PORT = process.env.PORT
 
 app.use(cors({
-    origin:"http://localhost:5173",
-    credentials:true,
+    origin: ["http://localhost:5173", "http://localhost:5174"],
+    credentials: true,
 }))
 
 app.use(express.json())
 app.use(cookieParser())
 
-app.use("/api/auth",authRoutes)
-app.use("/api/users",userRoutes)
-app.use("/api/chat",chatRoutes)
+app.use("/api/auth", authRoutes)
+app.use("/api/users", userRoutes)
+app.use("/api/chat", chatRoutes)
 
-app.listen(PORT,()=>{
+app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`)
     connectDB()
 })
