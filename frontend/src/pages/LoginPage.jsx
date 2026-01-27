@@ -36,7 +36,7 @@ const LoginPage = () => {
 
           {error && (
             <div className='alert alert-error mb-4'>
-              <span>{error.message || "Something went wrong"}</span>
+              <span>{error.response?.data?.message || error.message || "Something went wrong"}</span>
             </div>
           )}
 

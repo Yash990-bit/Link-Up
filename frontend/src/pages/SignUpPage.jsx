@@ -24,20 +24,17 @@ const SignUpPage = () => {
       data-theme="forest"
     >
       <div className="border border-primary/25 flex flex-col lg:flex-row w-full max-w-5xl mx-auto bg-base-100 rounded-xl shadow-lg overflow-hidden">
-        {/* SIGNUP FORM - LEFT SIDE */}
         <div className="w-full lg:w-1/2 p-4 sm:p-8 flex flex-col">
-          {/* LOGO */}
           <div className="mb-4 flex items-center justify-start gap-2">
             <ShipWheelIcon className="size-9 text-primary" />
             <span className="text-3xl font-bold font-mono bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary tracking-wider">
-              Streamify
+              LinkUp
             </span>
           </div>
 
-          {/* ERROR MESSAGE IF ANY */}
           {error && (
             <div className="alert alert-error mb-4">
-              <span>{error.response.data.message}</span>
+              <span>{error.response?.data?.message || error.message || "An unexpected error occurred"}</span>
             </div>
           )}
 
@@ -52,14 +49,13 @@ const SignUpPage = () => {
                 </div>
 
                 <div className="space-y-3">
-                  {/* FULLNAME */}
                   <div className="form-control w-full">
                     <label className="label">
                       <span className="label-text">Full Name</span>
                     </label>
                     <input
                       type="text"
-                      placeholder="John Doe"
+                      placeholder="Full Name"
                       className="input input-bordered w-full"
                       value={signupData.fullName}
                       onChange={(e) => setSignupData({ ...signupData, fullName: e.target.value })}
@@ -73,7 +69,7 @@ const SignUpPage = () => {
                     </label>
                     <input
                       type="email"
-                      placeholder="john@gmail.com"
+                      placeholder="Enter your email"
                       className="input input-bordered w-full"
                       value={signupData.email}
                       onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}

@@ -16,12 +16,12 @@ export const logout = async (logoutData) => {
 }
 
 export const getAuthUser = async () => {
-    try{
+    try {
         const res = await axiosInstance.get('/auth/me')
         return res.data
     }
-    catch(error){
-        console.log('Error in getAuthUser:',error)
+    catch (error) {
+        console.log('Error in getAuthUser:', error.message || error)
         return null
     }
 }
@@ -31,7 +31,28 @@ export const completeOnboarding = async (userData) => {
     return response.data
 }
 
+
 export const getStreamToken = async () => {
     const response = await axiosInstance.get('/chat/token')
     return response.data
+}
+
+export async function getUserFriends(){
+    const res = await axiosInstance.get('/users/friends')
+    return res.data
+}
+
+export async function getRecommendedUsers(){
+    const res = await axiosInstance.get('/users')
+    return res.data
+}
+
+export async function getOutgoingFriendReqs(){
+    const res = await axiosInstance.get('/users/outgoing-friend-requests')
+    return res.data
+}
+
+export async function sendFriendRequest(userId){
+    const res = await axiosInstance.get(`/users/friend-requests/${userId}`)
+    return res.data
 }
