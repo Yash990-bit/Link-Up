@@ -19,7 +19,7 @@ const App = () => {
 
   const { isLoading, authUser } = useAuthUser()
 
-  const {theme} = useThemeStore
+  const { theme } = useThemeStore()
 
   const isAuthenticated = Boolean(authUser)
   const isOnboarded = authUser?.isOnboarded
@@ -28,7 +28,7 @@ const App = () => {
   console.log("isAuthenticated:", isAuthenticated, "isOnboarded:", isOnboarded);
 
   if (isLoading) return <PageLoader />
- 
+
   return (
     <div className='h-screen' data-theme={theme}>
       <Routes>

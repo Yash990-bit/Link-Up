@@ -54,7 +54,6 @@ const SideBar = () => {
         <div className='p-4 border-t border-base-300 mt-auto'>
             <div className='flex items-center gap-3'>
                 <div className='avatar'>
-                    <img src={authUser?.profilePic} alt='User Avatar'/>
                 </div>
             </div>
 
