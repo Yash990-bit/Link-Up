@@ -65,3 +65,8 @@ export async function acceptFriendRequest(requestId) {
     const res = await axiosInstance.put(`/users/friend-requests/${requestId}/accept`)
     return res.data
 }
+
+export async function searchUsers(query) {
+    const res = await axiosInstance.get(`/users/search?query=${encodeURIComponent(query)}`)
+    return res.data
+}

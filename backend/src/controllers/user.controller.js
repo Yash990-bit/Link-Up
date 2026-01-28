@@ -1,6 +1,45 @@
 import FriendRequest from "../models/FriendRequest.js"
 import User from "../models/User.js"
 
+export async function searchUsers(req, res) {
+    try {
+        const currentUserId = req.user.id
+        const { query } = req.query
+
+        if (!query || query.trim().length < 2) {
+            return res.status(400).json({ message: "Search query must be at least 2 characters" })
+        }
+
+        // Find all friend requests involving the current user
+        const existingRequests = await FriendRequest.find({
+            $or: [{ sender: currentUserId }, { recipient: currentUserId }]
+        })
+
+        const associatedUserIds = existingRequests.map(re =>
+            re.sender.toString() === currentUserId ? re.recipient.toString() : re.sender.toString()
+        )
+
+        // Also include existing friends
+        const currentUser = await User.findById(currentUserId)
+        const allExcludedIds = [...new Set([...associatedUserIds, ...currentUser.friends.map(id => id.toString()), currentUserId])]
+
+        // Search users by name (case-insensitive partial match)
+        const users = await User.find({
+            $and: [
+                { _id: { $nin: allExcludedIds } },
+                { isOnboarded: true },
+                { fullName: { $regex: query.trim(), $options: 'i' } }
+            ]
+        }).limit(10)
+
+        res.status(200).json(users)
+    }
+    catch (error) {
+        console.error("Error in searchUsers controller", error.message)
+        res.status(500).json({ message: "Internal Server Error" })
+    }
+}
+
 export async function getRecommendedUsers(req, res) {
     try {
         const currentUserId = req.user.id
