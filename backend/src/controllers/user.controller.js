@@ -1,5 +1,6 @@
 import FriendRequest from "../models/FriendRequest.js"
 import User from "../models/User.js"
+import { streamClient } from "../lib/stream.js"
 
 export async function searchUsers(req, res) {
     try {
@@ -126,6 +127,21 @@ export async function sendFriendRequest(req, res) {
             recipient: recipientId
         })
 
+        // Real-time notification via Stream custom event
+        try {
+            const sender = await User.findById(myId).select("fullName profilePic")
+            await streamClient.channel('messaging', { members: [myId, recipientId] }).sendEvent({
+                type: 'friend_request_received',
+                sender: {
+                    id: myId,
+                    fullName: sender.fullName,
+                    profilePic: sender.profilePic
+                }
+            })
+        } catch (streamError) {
+            console.error("Error sending Stream event for friend request:", streamError.message)
+        }
+
         res.status(201).json(friendRequest)
     }
     catch (error) {
@@ -157,6 +173,21 @@ export async function acceptFriendRequest(req, res) {
         await User.findByIdAndUpdate(friendRequest.recipient, {
             $addToSet: { friends: friendRequest.sender }
         })
+
+        // Real-time notification for accepted request
+        try {
+            const recipient = await User.findById(req.user.id).select("fullName profilePic")
+            await streamClient.channel('messaging', { members: [friendRequest.sender.toString(), req.user.id] }).sendEvent({
+                type: 'friend_request_accepted',
+                sender: {
+                    id: req.user.id,
+                    fullName: recipient.fullName,
+                    profilePic: recipient.profilePic
+                }
+            })
+        } catch (streamError) {
+            console.error("Error sending Stream event for accepted friend request:", streamError.message)
+        }
 
         res.status(200).json({ message: "Friend request accepted." })
     }

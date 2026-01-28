@@ -2,6 +2,7 @@ import React from 'react'
 import useAuthUser from '../hooks/useAuthUser'
 import { useLocation, Link } from 'react-router'
 import { Aperture, BellIcon, HomeIcon, UsersIcon } from 'lucide-react'
+import { useNotificationStore } from '../store/useNotificationStore'
 
 
 
@@ -9,6 +10,7 @@ const SideBar = () => {
     const { authUser } = useAuthUser()
     const location = useLocation()
     const currentPath = location.pathname
+    const { unreadMessagesCount, pendingFriendRequestsCount } = useNotificationStore()
 
 
     return (
@@ -24,11 +26,14 @@ const SideBar = () => {
 
             <nav className='flex-1 p-4 space-y-1'>
                 <Link to='/'
-                    className={`btn btn-ghost justify-start w-full gap-3 px-3 normal-case ${currentPath === '/' ? 'btn-active' : ''
+                    className={`btn btn-ghost justify-start w-full gap-3 px-3 normal-case relative ${currentPath === '/' ? 'btn-active' : ''
                         }`}
                 >
                     <HomeIcon className='size-5 text-base-content opacity-70' />
                     <span>Home</span>
+                    {unreadMessagesCount > 0 && (
+                        <span className='badge badge-error badge-sm absolute right-2'>{unreadMessagesCount}</span>
+                    )}
                 </Link>
 
                 <Link to='/friends'
@@ -40,11 +45,14 @@ const SideBar = () => {
                 </Link>
 
                 <Link to='/notifications'
-                    className={`btn btn-ghost justify-start w-full gap-3 px-3 normal-case ${currentPath === '/notifications' ? 'btn-active' : ''
+                    className={`btn btn-ghost justify-start w-full gap-3 px-3 normal-case relative ${currentPath === '/notifications' ? 'btn-active' : ''
                         }`}
                 >
                     <BellIcon className='size-5 text-base-content opacity-70' />
                     <span>Notifications</span>
+                    {pendingFriendRequestsCount > 0 && (
+                        <span className='badge badge-error badge-sm absolute right-2'>{pendingFriendRequestsCount}</span>
+                    )}
                 </Link>
             </nav>
 

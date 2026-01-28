@@ -15,6 +15,7 @@ import PageLoader from "./components/PageLoader.jsx";
 import useAuthUser from "./hooks/useAuthUser.js";
 import Layout from "./components/Layout.jsx";
 import { useThemeStore } from "./store/useThemeStore.js";
+import NotificationObserver from "./components/NotificationObserver.jsx";
 
 const App = () => {
   const { isLoading, authUser } = useAuthUser();
@@ -117,6 +118,7 @@ const App = () => {
       </Routes>
 
       <Toaster />
+      {isAuthenticated && <NotificationObserver />}
     </div>
   );
 };

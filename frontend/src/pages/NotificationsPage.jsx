@@ -2,9 +2,16 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { acceptFriendRequest, getFriendRequests } from "../lib/api";
 import { BellIcon, ClockIcon, MessageSquareIcon, UserCheckIcon } from "lucide-react";
 import NoNotificationsFound from "../components/NoNotificationsFound";
+import { useEffect } from "react";
+import { useNotificationStore } from "../store/useNotificationStore";
 
 const NotificationsPage = () => {
   const queryClient = useQueryClient();
+  const { clearPendingFriendRequests } = useNotificationStore();
+
+  useEffect(() => {
+    clearPendingFriendRequests();
+  }, [clearPendingFriendRequests]);
 
   const { data: friendRequests, isLoading } = useQuery({
     queryKey: ["friendRequests"],
