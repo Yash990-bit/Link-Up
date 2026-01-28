@@ -4,9 +4,13 @@ import useAuthUser from "../hooks/useAuthUser";
 import { useQuery } from "@tanstack/react-query";
 import { getStreamToken } from "../lib/api";
 
-import {Channel,ChannelHeader,Chat,MessageInput,MessageList,Thread,Window,} from "stream-chat-react";
+import { Channel, ChannelHeader, Chat, MessageInput, MessageList, Thread, Window, } from "stream-chat-react";
 import { StreamChat } from "stream-chat";
 import toast from "react-hot-toast";
+
+import "stream-chat-react/dist/css/v2/index.css";
+import "../index.css";
+import { useThemeStore } from "../store/useThemeStore";
 
 import ChatLoader from "../components/ChatLoader";
 import CallButton from "../components/CallButton";
@@ -15,6 +19,22 @@ const STREAM_API_KEY = import.meta.env.VITE_STREAM_API_KEY;
 
 const ChatPage = () => {
   const { id: targetUserId } = useParams();
+  const { theme } = useThemeStore();
+
+  const isDarkMode = [
+    "dark",
+    "synthwave",
+    "halloween",
+    "forest",
+    "black",
+    "luxury",
+    "dracula",
+    "business",
+    "night",
+    "coffee",
+    "dim",
+    "sunset",
+  ].includes(theme);
 
   const [chatClient, setChatClient] = useState(null);
   const [channel, setChannel] = useState(null);
@@ -87,17 +107,17 @@ const ChatPage = () => {
   if (loading || !chatClient || !channel) return <ChatLoader />;
 
   return (
-    <div className="h-[93vh]">
-      <Chat client={chatClient}>
+    <div className="h-[calc(100vh-64px)] flex flex-col bg-base-100 overflow-hidden">
+      <Chat client={chatClient} theme={isDarkMode ? "messaging dark" : "messaging light"}>
         <Channel channel={channel}>
-          <div className="w-full relative">
-            <CallButton handleVideoCall={handleVideoCall} />
-            <Window>
-              <ChannelHeader />
-              <MessageList />
+          <Window>
+            <ChannelHeader />
+            <MessageList />
+            <div className="relative">
+              <CallButton handleVideoCall={handleVideoCall} />
               <MessageInput focus />
-            </Window>
-          </div>
+            </div>
+          </Window>
           <Thread />
         </Channel>
       </Chat>

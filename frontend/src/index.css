@@ -1,3 +1,39 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root,
+  [data-theme] {
+    /* Stream Chat v2 CSS Variable Overrides */
+    --str-chat__primary-color: var(--p);
+    --str-chat__active-primary-color: var(--pf);
+    --str-chat__surface-color: var(--b1);
+    --str-chat__secondary-surface-color: var(--b2);
+    --str-chat__border-radius: 1rem;
+    --str-chat__header-background-color: var(--b1);
+    --str-chat__header-color: var(--bc);
+    --str-chat__message-bubble-background-color: var(--b2);
+    --str-chat__message-bubble-color: var(--bc);
+    --str-chat__own-message-bubble-background-color: var(--p);
+    --str-chat__own-message-bubble-color: var(--pc);
+    --str-chat__input-background-color: var(--b2);
+    --str-chat__input-color: var(--bc);
+    --str-chat__input-placeholder-color: var(--bc);
+    --str-chat__primary-font-family: inherit;
+  }
+}
+
+/* Custom adjustments for Stream components to match DaisyUI */
+.str-chat__channel-header {
+  border-bottom: 1px solid var(--b3) !important;
+}
+
+.str-chat__message-input {
+  border-top: 1px solid var(--b3) !important;
+  background-color: var(--b1) !important;
+}
+
+.str-chat__message-list {
+  background-color: var(--b1) !important;
+}
