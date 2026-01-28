@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import useAuthUser from "../hooks/useAuthUser";
 import { useQuery } from "@tanstack/react-query";
 import { getStreamToken } from "../lib/api";
@@ -92,6 +92,7 @@ const ChatPage = () => {
     initChat();
   }, [tokenData, authUser, targetUserId]);
 
+  const navigate = useNavigate();
   const handleVideoCall = () => {
     if (channel) {
       const callUrl = `${window.location.origin}/call/${channel.id}`;
@@ -100,23 +101,26 @@ const ChatPage = () => {
         text: `I've started a video call. Join me here: ${callUrl}`,
       });
 
-      toast.success("Video call link sent successfully!");
+      toast.success("Video call link sent!");
+      navigate(`/call/${channel.id}`);
     }
   };
 
   if (loading || !chatClient || !channel) return <ChatLoader />;
 
   return (
-    <div className="h-[calc(100vh-64px)] flex flex-col bg-base-100 overflow-hidden">
+    <div className="h-[calc(100vh-64px)] flex flex-col bg-[#e6eee6] overflow-hidden">
       <Chat client={chatClient} theme={isDarkMode ? "messaging dark" : "messaging light"}>
         <Channel channel={channel}>
           <Window>
-            <ChannelHeader />
-            <MessageList />
-            <div className="relative">
+            <div className="flex items-center justify-between pr-4 bg-base-100 border-b border-base-300">
+              <div className="flex-1">
+                <ChannelHeader />
+              </div>
               <CallButton handleVideoCall={handleVideoCall} />
-              <MessageInput focus />
             </div>
+            <MessageList />
+            <MessageInput focus />
           </Window>
           <Thread />
         </Channel>

@@ -4,7 +4,6 @@ import User from "../models/User.js"
 export async function getRecommendedUsers(req, res) {
     try {
         const currentUserId = req.user.id
-        // const currentUser = await User.findById(currentUserId)
         const currentUser = req.user
 
         const recommendedUsers = await User.find({
@@ -52,8 +51,8 @@ export async function sendFriendRequest(req, res) {
             return res.status(404).json({ message: "Recipient not found." })
         }
 
-        if (recipient.friends.includes(myId)) {
-            return res.status(400).json({ message: "Friend request already sent." })
+        if (recipient.friends.some(friendId => friendId.toString() === myId)) {
+            return res.status(400).json({ message: "You are already friends with this user." })
         }
 
         const existingRequest = await FriendRequest.findOne({

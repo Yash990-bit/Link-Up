@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import { LANGUAGE_TO_FLAG } from "../constants";
+import { capitialize } from "../lib/utils";
 
 const FriendCard = ({ friend }) => {
   return (
@@ -7,7 +8,7 @@ const FriendCard = ({ friend }) => {
       <div className="card-body p-4">
         <div className="flex items-center gap-3 mb-3">
           <div className="avatar size-12">
-            <img src={friend.profilePic} alt={friend.fullName} />
+            <img src={friend.profilePic} alt={friend.fullName} className="rounded-full" />
           </div>
           <h3 className="font-semibold truncate">{friend.fullName}</h3>
         </div>
@@ -15,11 +16,11 @@ const FriendCard = ({ friend }) => {
         <div className="flex flex-wrap gap-1.5 mb-3">
           <span className="badge badge-secondary text-xs">
             {getLanguageFlag(friend.nativeLanguage)}
-            Native: {friend.nativeLanguage}
+            Native: {capitialize(friend.nativeLanguage)}
           </span>
           <span className="badge badge-outline text-xs">
             {getLanguageFlag(friend.learningLanguage)}
-            Learning: {friend.learningLanguage}
+            Learning: {capitialize(friend.learningLanguage)}
           </span>
         </div>
 

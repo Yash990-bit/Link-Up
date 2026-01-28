@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 @layer base {
+
   :root,
   [data-theme] {
     /* Stream Chat v2 CSS Variable Overrides */
@@ -24,16 +25,57 @@
   }
 }
 
-/* Custom adjustments for Stream components to match DaisyUI */
+/* Custom adjustments for Stream components to match the provided design */
 .str-chat__channel-header {
   border-bottom: 1px solid var(--b3) !important;
-}
-
-.str-chat__message-input {
-  border-top: 1px solid var(--b3) !important;
   background-color: var(--b1) !important;
+  padding: 0.5rem 1rem !important;
 }
 
 .str-chat__message-list {
-  background-color: var(--b1) !important;
+  background-color: transparent !important;
+  /* Let ChatPage background show through */
+}
+
+/* Style message bubbles */
+.str-chat__message-bubble {
+  background-color: white !important;
+  color: #333 !important;
+  border-radius: 12px !important;
+  border-bottom-left-radius: 4px !important;
+}
+
+.str-chat__message--me .str-chat__message-bubble {
+  background-color: #d1e9ff !important;
+  color: #004a8f !important;
+  border-radius: 12px !important;
+  border-bottom-right-radius: 4px !important;
+  border-bottom-left-radius: 12px !important;
+}
+
+/* Style the message input as a rounded pill */
+.str-chat__message-input-container {
+  padding: 1rem !important;
+  background-color: transparent !important;
+}
+
+.str-chat__message-input {
+  background-color: white !important;
+  border: none !important;
+  border-radius: 9999px !important;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
+  padding: 0.5rem 1.5rem !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.str-chat__message-input textarea {
+  background-color: transparent !important;
+  border: none !important;
+  padding: 0.5rem 0 !important;
+}
+
+/* Hide unwanted elements to match the clean design */
+.str-chat__message-input-border {
+  display: none !important;
 }

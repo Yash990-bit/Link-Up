@@ -102,12 +102,12 @@ const HomePage = () => {
                 return (
                   <div
                     key={user._id}
-                    className="card bg-base-200 hover:shadow-lg transition-all duration-300"
+                    className="card bg-base-200 hover:shadow-md transition-all duration-300"
                   >
                     <div className="card-body p-5 space-y-4">
                       <div className="flex items-center gap-3">
-                        <div className="avatar size-16 rounded-full">
-                          <img src={user.profilePic} alt={user.fullName} />
+                        <div className="avatar size-12 rounded-full">
+                          <img src={user.profilePic} alt={user.fullName} className="rounded-full" />
                         </div>
 
                         <div>
@@ -122,11 +122,11 @@ const HomePage = () => {
                       </div>
 
                       <div className="flex flex-wrap gap-1.5">
-                        <span className="badge badge-secondary">
+                        <span className="badge badge-secondary text-xs">
                           {getLanguageFlag(user.nativeLanguage)}
                           Native: {capitialize(user.nativeLanguage)}
                         </span>
-                        <span className="badge badge-outline">
+                        <span className="badge badge-outline text-xs">
                           {getLanguageFlag(user.learningLanguage)}
                           Learning: {capitialize(user.learningLanguage)}
                         </span>
@@ -135,7 +135,7 @@ const HomePage = () => {
                       {user.bio && <p className="text-sm opacity-70">{user.bio}</p>}
 
                       <button
-                        className={`btn w-full mt-2 rounded-full ${hasRequestBeenSent ? "btn-disabled" : "btn-primary"
+                        className={`btn btn-outline w-full mt-2 rounded-full ${hasRequestBeenSent ? "btn-disabled" : ""
                           } `}
                         onClick={() => sendRequestMutation(user._id)}
                         disabled={hasRequestBeenSent || isPending}
