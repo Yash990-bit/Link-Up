@@ -10,6 +10,7 @@ import { capitialize } from '../lib/utils'
 const HomePage = () => {
   const queryClient = useQueryClient()
   const [outgoingRequestsIds, setOutgoingRequestsIds] = useState(new Set())
+  const [removedUserIds, setRemovedUserIds] = useState(new Set())
 
   const { data: friends = [], isLoading: loadingFriends } = useQuery({
     queryKey: ['friends'],
@@ -28,7 +29,10 @@ const HomePage = () => {
 
   const { mutate: sendRequestMutation, isPending, error: sendRequestError } = useMutation({
     mutationFn: sendFriendRequest,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['outgoingFriendReqs'] }),
+    onSuccess: (_, userId) => {
+      queryClient.invalidateQueries({ queryKey: ['outgoingFriendReqs'] })
+      setRemovedUserIds(prev => new Set(prev).add(userId))
+    },
   })
 
   useEffect(() => {
@@ -95,8 +99,8 @@ const HomePage = () => {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {recommendedUsers.map((user) => {
+            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+              {recommendedUsers.filter(u => !removedUserIds.has(u._id.toString())).map((user) => {
                 const hasRequestBeenSent = outgoingRequestsIds.has(user._id.toString());
 
                 return (

@@ -4,12 +4,23 @@ import User from "../models/User.js"
 export async function getRecommendedUsers(req, res) {
     try {
         const currentUserId = req.user.id
-        const currentUser = req.user
+
+        // Find all friend requests involving the current user
+        const existingRequests = await FriendRequest.find({
+            $or: [{ sender: currentUserId }, { recipient: currentUserId }]
+        })
+
+        const associatedUserIds = existingRequests.map(re =>
+            re.sender.toString() === currentUserId ? re.recipient.toString() : re.sender.toString()
+        )
+
+        // Also include existing friends
+        const currentUser = await User.findById(currentUserId)
+        const allExcludedIds = [...new Set([...associatedUserIds, ...currentUser.friends.map(id => id.toString()), currentUserId])]
 
         const recommendedUsers = await User.find({
             $and: [
-                { _id: { $ne: currentUserId } },
-                { _id: { $nin: currentUser.friends } },
+                { _id: { $nin: allExcludedIds } },
                 { isOnboarded: true }
             ]
         })
