@@ -1,31 +1,54 @@
 import jwt from "jsonwebtoken"
 import User from "../models/User.js"
 
-export const protectRoute = async (req,res,next)=>{
+export const protectRoute = async (req, res, next) => {
 
-    try{
+    try {
         const token = req.cookies.jwt
-        if(!token){
-            return res.status(401).json({message:"Unauthorized - No token provided"})
+        if (!token) {
+            return res.status(401).json({ message: "Unauthorized - No token provided" })
         }
 
-        const decode = jwt.verify(token,process.env.JWT_SECRET)
+        const decode = jwt.verify(token, process.env.JWT_SECRET)
 
-        if(!decode){
-            return res.status(401).json({message:"Unauthorized - Invalid token"})
+        if (!decode) {
+            return res.status(401).json({ message: "Unauthorized - Invalid token" })
         }
 
         const user = await User.findById(decode.userId)
 
-        if(!user){
-            return res.status(401).json({message: "Unauthorized - User not found"})
+        if (!user) {
+            return res.status(401).json({ message: "Unauthorized - User not found" })
         }
 
         req.user = user
         next()
     }
-    catch(error){
+    catch (error) {
         console.log("Error in protectRoute middleware", error)
-        res.status(500).json({message: "Internal Server Error"})
+        res.status(500).json({ message: "Internal Server Error" })
+    }
+}
+
+export const optionalProtectRoute = async (req, res, next) => {
+    try {
+        const token = req.cookies.jwt
+        if (!token) {
+            req.user = null
+            return next()
+        }
+
+        const decode = jwt.verify(token, process.env.JWT_SECRET)
+        if (!decode) {
+            req.user = null
+            return next()
+        }
+
+        const user = await User.findById(decode.userId)
+        req.user = user || null
+        next()
+    } catch (error) {
+        req.user = null
+        next()
     }
 }
