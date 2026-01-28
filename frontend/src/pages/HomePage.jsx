@@ -144,6 +144,7 @@ const HomePage = () => {
           <div className="flex gap-2">
             <div className="relative flex-1">
               <input
+                id="search-input"
                 type="text"
                 placeholder="Search users by name..."
                 className="input input-bordered w-full pr-10"
@@ -241,9 +242,20 @@ const HomePage = () => {
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
                 <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Meet New Learners</h2>
-                <p className="opacity-70">
+                <p className="opacity-70 mb-4">
                   Discover perfect language exchange partners based on your profile
                 </p>
+                <button
+                  className="btn btn-outline btn-sm rounded-full gap-2 hover:bg-primary hover:text-primary-content transition-all duration-300"
+                  onClick={() => {
+                    const element = document.getElementById('search-input');
+                    element?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    element?.focus();
+                  }}
+                >
+                  <SearchIcon className="size-4" />
+                  <span>Search Peers</span>
+                </button>
               </div>
             </div>
           </div>
