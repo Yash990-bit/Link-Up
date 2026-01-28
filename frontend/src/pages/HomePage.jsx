@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useQueryClient, useQuery, useMutation } from '@tanstack/react-query'
 import { Link } from 'react-router'
 import { getOutgoingFriendReqs, getRecommendedUsers, getUserFriends, sendFriendRequest, searchUsers } from '../lib/api'
-import { CheckCircleIcon, UserPlusIcon, MapPinIcon, Users2Icon, SearchIcon, XIcon } from 'lucide-react'
+import { CheckCircleIcon, UserPlusIcon, MapPinIcon, Users2Icon, SearchIcon, XIcon, Share2Icon, CopyIcon } from 'lucide-react'
 import FriendCard, { getLanguageFlag } from '../components/FriendCard'
 import NoFriendsFound from '../components/NoFriendsFound'
 import { capitialize } from '../lib/utils'
@@ -15,6 +15,8 @@ const HomePage = () => {
   const [searchResults, setSearchResults] = useState([])
   const [isSearching, setIsSearching] = useState(false)
   const [showSearchResults, setShowSearchResults] = useState(false)
+  const [showInviteModal, setShowInviteModal] = useState(false)
+  const [copied, setCopied] = useState(false)
 
   const { data: friends = [], isLoading: loadingFriends } = useQuery({
     queryKey: ['friends'],
@@ -61,6 +63,41 @@ const HomePage = () => {
     setShowSearchResults(false)
   }
 
+  const getInviteLink = () => {
+    const baseUrl = window.location.origin
+    return `${baseUrl}/signup`
+  }
+
+  const handleShare = async () => {
+    const inviteLink = getInviteLink()
+    const shareData = {
+      title: 'Join LinkUp!',
+      text: 'Hey! Join me on LinkUp - a language learning platform where we can practice together!',
+      url: inviteLink
+    }
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData)
+      } catch (err) {
+        console.log('Share cancelled')
+      }
+    } else {
+      setShowInviteModal(true)
+    }
+  }
+
+  const copyToClipboard = async () => {
+    const inviteLink = getInviteLink()
+    try {
+      await navigator.clipboard.writeText(inviteLink)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch (err) {
+      console.error('Failed to copy:', err)
+    }
+  }
+
   useEffect(() => {
     const outgoingIds = new Set()
     if (outgoingFriendReqs && outgoingFriendReqs.length > 0) {
@@ -75,10 +112,16 @@ const HomePage = () => {
       <div className='container mx-auto space-y-10'>
         <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4'>
           <h2 className='text-2xl sm:text-3xl font-bold tracking-tight'>Your Friends</h2>
-          <Link to='/notifications' className='btn btn-outline btn-sm rounded-full'>
-            <Users2Icon className='mr-2 size-4' />
-            Friend Requests
-          </Link>
+          <div className='flex gap-2'>
+            <button onClick={handleShare} className='btn btn-primary btn-sm rounded-full'>
+              <Share2Icon className='mr-2 size-4' />
+              Invite Friends
+            </button>
+            <Link to='/notifications' className='btn btn-outline btn-sm rounded-full'>
+              <Users2Icon className='mr-2 size-4' />
+              Friend Requests
+            </Link>
+          </div>
         </div>
 
         {loadingFriends ? (
@@ -288,6 +331,48 @@ const HomePage = () => {
           )}
         </section>
       </div>
+
+      {/* Invite Modal */}
+      {showInviteModal && (
+        <div className="modal modal-open">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg mb-4">Invite Friends to LinkUp</h3>
+            <p className="text-sm opacity-70 mb-4">
+              Share this link with your friends so they can join LinkUp and connect with you!
+            </p>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                readOnly
+                value={getInviteLink()}
+                className="input input-bordered flex-1 text-sm"
+              />
+              <button
+                className={`btn ${copied ? 'btn-success' : 'btn-primary'}`}
+                onClick={copyToClipboard}
+              >
+                {copied ? (
+                  <>
+                    <CheckCircleIcon className="size-4 mr-1" />
+                    Copied!
+                  </>
+                ) : (
+                  <>
+                    <CopyIcon className="size-4 mr-1" />
+                    Copy
+                  </>
+                )}
+              </button>
+            </div>
+            <div className="modal-action">
+              <button className="btn" onClick={() => setShowInviteModal(false)}>
+                Close
+              </button>
+            </div>
+          </div>
+          <div className="modal-backdrop" onClick={() => setShowInviteModal(false)}></div>
+        </div>
+      )}
 
     </div>
   )
