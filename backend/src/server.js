@@ -20,7 +20,21 @@ const __dirname = path.dirname(__filename)
 
 
 app.use(cors({
-    origin: ["http://localhost:5173", "http://localhost:5174", process.env.CLIENT_URL],
+    origin: (origin, callback) => {
+        const allowedOrigins = [
+            "http://localhost:5173",
+            "http://localhost:5174",
+            process.env.CLIENT_URL,
+            "https://link-up-eta-eight.vercel.app"
+        ].filter(Boolean).map(url => url.replace(/\/$/, ""));
+
+        if (!origin || allowedOrigins.includes(origin.replace(/\/$/, ""))) {
+            callback(null, true);
+        } else {
+            console.log("CORS blocked origin:", origin);
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true,
 }))
 
