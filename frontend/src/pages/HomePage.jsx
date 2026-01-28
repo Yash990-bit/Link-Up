@@ -113,7 +113,7 @@ const HomePage = () => {
         <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4'>
           <h2 className='text-2xl sm:text-3xl font-bold tracking-tight'>Your Friends</h2>
           <div className='flex gap-2'>
-            <button onClick={handleShare} className='btn btn-primary btn-sm rounded-full'>
+            <button type='button' onClick={handleShare} className='btn btn-primary btn-sm rounded-full'>
               <Share2Icon className='mr-2 size-4' />
               Invite Friends
             </button>
@@ -172,6 +172,7 @@ const HomePage = () => {
                       )}
                     </div>
                     <button
+                      type="button"
                       className="btn btn-primary btn-sm rounded-full"
                       onClick={handleSearch}
                       disabled={searchQuery.trim().length < 2 || isSearching}

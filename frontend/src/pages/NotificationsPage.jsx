@@ -67,6 +67,7 @@ const NotificationsPage = () => {
                           </div>
 
                           <button
+                            type='button'
                             className="btn btn-primary btn-sm"
                             onClick={() => acceptRequestMutation(request._id)}
                             disabled={isPending}
@@ -80,7 +81,7 @@ const NotificationsPage = () => {
                 </div>
               </section>
             )}
-            
+
             {acceptedRequests.length > 0 && (
               <section className="space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
