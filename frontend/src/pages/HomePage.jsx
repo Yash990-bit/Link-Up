@@ -138,126 +138,116 @@ const HomePage = () => {
           </div>
         )}
 
-        {/* Search Section */}
-        <section className="space-y-4">
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Find Friends</h2>
-          <div className="flex gap-2">
-            <div className="relative flex-1">
-              <input
-                id="search-input"
-                type="text"
-                placeholder="Search users by name..."
-                className="input input-bordered w-full pr-10"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-              />
-              {searchQuery && (
-                <button
-                  className="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost btn-xs btn-circle"
-                  onClick={clearSearch}
-                >
-                  <XIcon className="size-4" />
-                </button>
-              )}
-            </div>
-            <button
-              className="btn btn-primary"
-              onClick={handleSearch}
-              disabled={searchQuery.trim().length < 2 || isSearching}
-            >
-              {isSearching ? (
-                <span className="loading loading-spinner loading-sm" />
-              ) : (
-                <SearchIcon className="size-5" />
-              )}
-              Search
-            </button>
-          </div>
 
-          {showSearchResults && (
-            <div className="mt-4">
-              {searchResults.length === 0 ? (
-                <div className="card bg-base-200 p-6 text-center">
-                  <p className="text-base-content opacity-70">No users found matching "{searchQuery}"</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {searchResults.map((user) => {
-                    const hasRequestBeenSent = outgoingRequestsIds.has(user._id.toString());
-                    return (
-                      <div key={user._id} className="card bg-base-200 hover:shadow-md transition-all duration-300">
-                        <div className="card-body p-4 space-y-3">
-                          <div className="flex items-center gap-3">
-                            <div className="avatar size-12 rounded-full">
-                              <img src={user.profilePic} alt={user.fullName} className="rounded-full" />
-                            </div>
-                            <div>
-                              <h3 className="font-semibold">{user.fullName}</h3>
-                              {user.location && (
-                                <div className="flex items-center text-xs opacity-70">
-                                  <MapPinIcon className="size-3 mr-1" />
-                                  {user.location}
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                          <div className="flex flex-wrap gap-1.5">
-                            <span className="badge badge-secondary text-xs">
-                              {getLanguageFlag(user.nativeLanguage)} Native: {capitialize(user.nativeLanguage)}
-                            </span>
-                            <span className="badge badge-outline text-xs">
-                              {getLanguageFlag(user.learningLanguage)} Learning: {capitialize(user.learningLanguage)}
-                            </span>
-                          </div>
-                          <button
-                            className={`btn btn-outline btn-sm w-full rounded-full ${hasRequestBeenSent ? "btn-disabled" : ""}`}
-                            onClick={() => sendRequestMutation(user._id)}
-                            disabled={hasRequestBeenSent || isPending}
-                          >
-                            {hasRequestBeenSent ? (
-                              <>
-                                <CheckCircleIcon className="size-4 mr-2" />
-                                Request Sent
-                              </>
-                            ) : (
-                              <>
-                                <UserPlusIcon className="size-4 mr-2" />
-                                Send Request
-                              </>
-                            )}
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          )}
-        </section>
 
         <section>
           <div className="mb-6 sm:mb-8">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
                 <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Meet New Learners</h2>
-                <p className="opacity-70 mb-4">
-                  Discover perfect language exchange partners based on your profile
-                </p>
-                <button
-                  className="btn btn-outline btn-sm rounded-full gap-2 hover:bg-primary hover:text-primary-content transition-all duration-300"
-                  onClick={() => {
-                    const element = document.getElementById('search-input');
-                    element?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    element?.focus();
-                  }}
-                >
-                  <SearchIcon className="size-4" />
-                  <span>Search Peers</span>
-                </button>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <p className="opacity-70">
+                    Discover perfect language exchange partners based on your profile
+                  </p>
+
+                  {/* Integrated Small Search Box */}
+                  <div className="flex gap-2 items-center">
+                    <div className="relative">
+                      <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 opacity-40" />
+                      <input
+                        type="text"
+                        placeholder="Search name..."
+                        className="input input-sm input-bordered w-full sm:w-48 pl-9 rounded-full focus:input-primary transition-all duration-300"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                      />
+                      {searchQuery && (
+                        <button
+                          className="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost btn-xs btn-circle"
+                          onClick={clearSearch}
+                        >
+                          <XIcon className="size-3" />
+                        </button>
+                      )}
+                    </div>
+                    <button
+                      className="btn btn-primary btn-sm rounded-full"
+                      onClick={handleSearch}
+                      disabled={searchQuery.trim().length < 2 || isSearching}
+                    >
+                      {isSearching ? <span className="loading loading-spinner loading-xs" /> : "Search"}
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
+
+            {/* Search Results Display Integrated */}
+            {showSearchResults && (
+              <div className="mt-8 border-b border-base-content/10 pb-10">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-semibold text-lg">Search Results</h3>
+                  <button onClick={clearSearch} className="btn btn-ghost btn-xs">Clear</button>
+                </div>
+                {searchResults.length === 0 ? (
+                  <div className="card bg-base-200 p-6 text-center">
+                    <p className="text-base-content opacity-70">No users found matching "{searchQuery}"</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {searchResults.map((user) => {
+                      const hasRequestBeenSent = outgoingRequestsIds.has(user._id.toString());
+                      return (
+                        <div key={user._id} className="card bg-base-200 hover:shadow-md transition-all duration-300">
+                          <div className="card-body p-5 space-y-4">
+                            <div className="flex items-center gap-3">
+                              <div className="avatar size-12 rounded-full">
+                                <img src={user.profilePic} alt={user.fullName} className="rounded-full" />
+                              </div>
+                              <div>
+                                <h3 className="font-semibold">{user.fullName}</h3>
+                                {user.location && (
+                                  <div className="flex items-center text-xs opacity-70">
+                                    <MapPinIcon className="size-3 mr-1" />
+                                    {user.location}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex flex-wrap gap-1.5">
+                              <span className="badge badge-secondary text-xs">
+                                {getLanguageFlag(user.nativeLanguage)} Native: {capitialize(user.nativeLanguage)}
+                              </span>
+                              <span className="badge badge-outline text-xs">
+                                {getLanguageFlag(user.learningLanguage)} Learning: {capitialize(user.learningLanguage)}
+                              </span>
+                            </div>
+                            <button
+                              className={`btn btn-outline btn-sm w-full rounded-full ${hasRequestBeenSent ? "btn-disabled" : ""}`}
+                              onClick={() => sendRequestMutation(user._id)}
+                              disabled={hasRequestBeenSent || isPending}
+                            >
+                              {hasRequestBeenSent ? (
+                                <>
+                                  <CheckCircleIcon className="size-4 mr-2" />
+                                  Request Sent
+                                </>
+                              ) : (
+                                <>
+                                  <UserPlusIcon className="size-4 mr-2" />
+                                  Send Request
+                                </>
+                              )}
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {sendRequestError && (
