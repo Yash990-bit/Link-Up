@@ -1,9 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { acceptFriendRequest, getFriendRequests } from "../lib/api";
+import { acceptFriendRequest, getFriendRequests, rejectFriendRequest } from "../lib/api";
 import { BellIcon, ClockIcon, MessageSquareIcon, UserCheckIcon } from "lucide-react";
 import NoNotificationsFound from "../components/NoNotificationsFound";
 import { useEffect } from "react";
 import { useNotificationStore } from "../store/useNotificationStore";
+import toast from "react-hot-toast";
 
 const NotificationsPage = () => {
   const queryClient = useQueryClient();
@@ -18,12 +19,27 @@ const NotificationsPage = () => {
     queryFn: getFriendRequests,
   });
 
-  const { mutate: acceptRequestMutation, isPending } = useMutation({
+  const { mutate: acceptRequestMutation, isPending: isAccepting } = useMutation({
     mutationFn: acceptFriendRequest,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["friendRequests"] });
       queryClient.invalidateQueries({ queryKey: ["friends"] });
+      toast.success("Friend request accepted!");
     },
+    onError: (error) => {
+      toast.error(error.response?.data?.message || "Failed to accept request");
+    }
+  });
+
+  const { mutate: rejectRequestMutation, isPending: isRejecting } = useMutation({
+    mutationFn: rejectFriendRequest,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["friendRequests"] });
+      toast.success("Friend request ignored");
+    },
+    onError: (error) => {
+      toast.error(error.response?.data?.message || "Failed to ignore request");
+    }
   });
 
   const incomingRequests = friendRequests?.incomingReqs || [];
@@ -73,14 +89,24 @@ const NotificationsPage = () => {
                             </div>
                           </div>
 
-                          <button
-                            type='button'
-                            className="btn btn-primary btn-sm"
-                            onClick={() => acceptRequestMutation(request._id)}
-                            disabled={isPending}
-                          >
-                            Accept
-                          </button>
+                          <div className="flex gap-2">
+                            <button
+                              type='button'
+                              className="btn btn-primary btn-sm"
+                              onClick={() => acceptRequestMutation(request._id)}
+                              disabled={isAccepting || isRejecting}
+                            >
+                              {isAccepting ? <span className="loading loading-spinner loading-xs"></span> : "Accept"}
+                            </button>
+                            <button
+                              type='button'
+                              className="btn btn-ghost btn-outline btn-sm"
+                              onClick={() => rejectRequestMutation(request._id)}
+                              disabled={isAccepting || isRejecting}
+                            >
+                              {isRejecting ? <span className="loading loading-spinner loading-xs"></span> : "Ignore"}
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>

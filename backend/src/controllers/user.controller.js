@@ -197,6 +197,30 @@ export async function acceptFriendRequest(req, res) {
     }
 }
 
+export async function rejectFriendRequest(req, res) {
+    try {
+        const { id: requestId } = req.params;
+        const friendRequest = await FriendRequest.findById(requestId);
+
+        if (!friendRequest) {
+            return res.status(404).json({ message: "Friend request not found." });
+        }
+
+        if (friendRequest.recipient.toString() !== req.user.id) {
+            return res.status(403).json({ message: "You are not authorized to reject this friend request." });
+        }
+
+        friendRequest.status = "rejected";
+        await friendRequest.save();
+
+        res.status(200).json({ message: "Friend request rejected." });
+    }
+    catch (error) {
+        console.error("Error in rejectFriendRequest controller", error.message);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+}
+
 export async function getFriendRequest(req, res) {
     try {
         const incomingReqs = await FriendRequest.find({
